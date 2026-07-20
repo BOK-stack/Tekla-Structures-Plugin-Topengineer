@@ -21,43 +21,36 @@ namespace TopengineerPlugin.Config
 
         private void InitializeDefaultSettings()
         {
-            // Размеры и единицы измерения
-            _settings["DefaultUnit"] = "mm"; // миллиметры
-            _settings["MassUnit"] = "kg"; // килограммы
-            _settings["LengthUnit"] = "m"; // метры
+            _settings["DefaultUnit"] = "mm";
+            _settings["MassUnit"] = "kg";
+            _settings["LengthUnit"] = "m";
 
-            // Стандарты
-            _settings["BOLTStandard"] = "ГОСТ 7798-70"; // Болты
-            _settings["ProfileStandard"] = "ГОСТ 8239-89"; // Двутавры
-            _settings["ChannelStandard"] = "ГОСТ 8240-89"; // Швеллеры
-            _settings["AngleStandard"] = "ГОСТ 8509-93"; // Уголки
-            _settings["DrawingStandard"] = "ГОСТ 2.106-96"; // Спецификация
-            _settings["WeldingStandard"] = "ГОСТ 2.312-72"; // Сварка
+            _settings["BOLTStandard"] = "ГОСТ 7798-70";
+            _settings["ProfileStandard"] = "ГОСТ 8239-89";
+            _settings["ChannelStandard"] = "ГОСТ 8240-89";
+            _settings["AngleStandard"] = "ГОСТ 8509-93";
+            _settings["DrawingStandard"] = "ГОСТ 2.106-96";
+            _settings["WeldingStandard"] = "ГОСТ 2.312-72";
 
-            // Цвета (RGB hex)
-            _settings["HighStrengthBoltColor"] = "#FF0000"; // Красный
-            _settings["StandardBoltColor"] = "#0000FF"; // Синий
-            _settings["WeldColor"] = "#FFA500"; // Оранжевый
+            _settings["HighStrengthBoltColor"] = "#FF0000";
+            _settings["StandardBoltColor"] = "#0000FF";
+            _settings["WeldColor"] = "#FFA500";
 
-            // Параметры округления
-            _settings["RoundDimensionsTo"] = 1; // 1 мм
-            _settings["RoundMassDecimalPlaces"] = 2; // 2 знака
+            _settings["RoundDimensionsTo"] = 1;
+            _settings["RoundMassDecimalPlaces"] = 2;
 
-            // Параметры печати
             _settings["DefaultPaperSize"] = "A3";
             _settings["DefaultScale"] = "1:1";
-            _settings["DefaultLineWeight"] = 0.7; // mm
+            _settings["DefaultLineWeight"] = 0.7;
 
-            // Автоматизация
             _settings["AutoRoundDimensions"] = true;
             _settings["AutoGenerateTitleBlock"] = true;
             _settings["AutoPlaceWelds"] = false;
             _settings["AutoSelectWeldSize"] = true;
 
-            // Форматирование текста
             _settings["UseRussianDesignations"] = true;
             _settings["DateFormat"] = "dd.MM.yyyy";
-            _settings["DecimalSeparator"] = ","; // Запятая для России
+            _settings["DecimalSeparator"] = ",";
 
             _logger.Log("Default GOST settings initialized");
         }
@@ -145,7 +138,6 @@ namespace TopengineerPlugin.Config
             {
                 _logger.Log("Validating GOST settings");
 
-                // Check required standards
                 string[] requiredStandards = {
                     "BOLTStandard", "ProfileStandard", "DrawingStandard", "WeldingStandard"
                 };

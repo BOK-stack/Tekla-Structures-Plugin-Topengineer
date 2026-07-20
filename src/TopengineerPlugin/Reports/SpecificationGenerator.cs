@@ -122,7 +122,7 @@ namespace TopengineerPlugin.Reports
         }
 
         /// <summary>
-        /// Validate specification structure (GОСТ 2.106-96)
+        /// Validate specification structure (ГОСТ 2.106-96)
         /// </summary>
         public bool ValidateSpecification(Dictionary<string, object> specification)
         {
@@ -130,7 +130,6 @@ namespace TopengineerPlugin.Reports
             {
                 _logger.Log("Validating specification structure");
 
-                // Check for required fields
                 var requiredFields = new[] { "Title", "Date", "Sections" };
 
                 foreach (var field in requiredFields)

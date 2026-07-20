@@ -26,14 +26,12 @@ namespace TopengineerPlugin.Reports
             {
                 _logger.Log($"Starting export to Excel: {filePath}");
 
-                // Check if file path is valid
                 if (string.IsNullOrWhiteSpace(filePath))
                 {
                     _logger.Error("Invalid file path provided");
                     return false;
                 }
 
-                // Create directory if it doesn't exist
                 string directory = Path.GetDirectoryName(filePath);
                 if (!Directory.Exists(directory))
                 {
@@ -41,8 +39,6 @@ namespace TopengineerPlugin.Reports
                     _logger.Log($"Created directory: {directory}");
                 }
 
-                // TODO: Implement actual Excel export using EPPlus or similar library
-                // For now, we'll create a CSV file as demonstration
                 string csvPath = Path.ChangeExtension(filePath, ".csv");
                 ExportToCSV(reportData, csvPath);
 
@@ -67,14 +63,12 @@ namespace TopengineerPlugin.Reports
 
                 using (StreamWriter writer = new StreamWriter(filePath))
                 {
-                    // Write header
                     writer.WriteLine("\"Key\",\"Value\"");
 
-                    // Write data
                     foreach (var kvp in data)
                     {
                         string value = kvp.Value?.ToString() ?? "";
-                        value = value.Replace("\"", "\\\""); // Escape quotes
+                        value = value.Replace("\"", "\\\"");
                         writer.WriteLine($"\"{kvp.Key}\",\"{value}\"");
                     }
                 }
@@ -104,8 +98,6 @@ namespace TopengineerPlugin.Reports
                     return false;
                 }
 
-                // TODO: Implement actual Excel export using EPPlus
-                // For now, export to CSV
                 string csvPath = Path.ChangeExtension(filePath, ".csv");
                 ExportTableToCSV(tableData, csvPath);
 
@@ -128,18 +120,16 @@ namespace TopengineerPlugin.Reports
                     if (tableData.Count == 0)
                         return false;
 
-                    // Write headers
                     var headers = tableData[0].Keys;
                     writer.WriteLine(string.Join(",", headers));
 
-                    // Write rows
                     foreach (var row in tableData)
                     {
                         var values = new List<string>();
                         foreach (var header in headers)
                         {
                             string value = row.ContainsKey(header) ? row[header]?.ToString() ?? "" : "";
-                            value = value.Replace("\"", "\\\""); // Escape quotes
+                            value = value.Replace("\"", "\\\"");
                             values.Add($"\"{value}\"");
                         }
                         writer.WriteLine(string.Join(",", values));

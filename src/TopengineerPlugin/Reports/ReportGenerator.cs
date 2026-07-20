@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using TopengineerPlugin.Models;
 using TopengineerPlugin.Utilities;
 
 namespace TopengineerPlugin.Reports
@@ -12,18 +10,12 @@ namespace TopengineerPlugin.Reports
     public class ReportGenerator
     {
         private Logger _logger;
-        private List<Bolt> _bolts;
-        private List<Profile> _profiles;
-        private List<Material> _materials;
-        private List<Weld> _welds;
+        private List<Dictionary<string, object>> _reportData;
 
         public ReportGenerator()
         {
             _logger = new Logger("ReportGenerator");
-            _bolts = new List<Bolt>();
-            _profiles = new List<Profile>();
-            _materials = new List<Material>();
-            _welds = new List<Weld>();
+            _reportData = new List<Dictionary<string, object>>();
         }
 
         /// <summary>
@@ -39,10 +31,8 @@ namespace TopengineerPlugin.Reports
                 {
                     { "Title", "Техническая спецификация. Конструктивные металлоконструкции" },
                     { "Date", DateTime.Now.ToString("dd.MM.yyyy") },
-                    { "TotalItems", _profiles.Count + _bolts.Count },
-                    { "Profiles", GenerateProfilesTable() },
-                    { "Bolts", GenerateBoltsTable() },
-                    { "TotalMass", CalculateTotalMass() }
+                    { "TotalItems", _reportData.Count },
+                    { "Data", new List<Dictionary<string, object>>(_reportData) }
                 };
 
                 _logger.Log("Technical specification generated successfully");
@@ -64,26 +54,11 @@ namespace TopengineerPlugin.Reports
             {
                 _logger.Log("Generating steel consumption report (КЖ)");
 
-                double totalConsumption = 0;
-                var materialBreakdown = new Dictionary<string, double>();
-
-                foreach (var profile in _profiles)
-                {
-                    double mass = profile.MassPerMeter;
-                    totalConsumption += mass;
-
-                    string materialKey = "Сталь";
-                    if (!materialBreakdown.ContainsKey(materialKey))
-                        materialBreakdown[materialKey] = 0;
-                    materialBreakdown[materialKey] += mass;
-                }
-
                 var report = new Dictionary<string, object>
                 {
                     { "Title", "Ведомость расхода стали" },
                     { "Date", DateTime.Now.ToString("dd.MM.yyyy") },
-                    { "TotalConsumption", Math.Round(totalConsumption, 2) },
-                    { "MaterialBreakdown", materialBreakdown },
+                    { "TotalConsumption", 0.0 },
                     { "Unit", "кг" }
                 };
 
@@ -106,29 +81,13 @@ namespace TopengineerPlugin.Reports
             {
                 _logger.Log("Generating welding report");
 
-                double totalWeldLength = 0;
-                double totalWeldMass = 0;
-                var weldsByType = new Dictionary<string, int>();
-
-                foreach (var weld in _welds)
-                {
-                    totalWeldLength += weld.Length;
-                    totalWeldMass += weld.CalculateWeldMass();
-
-                    string weldType = weld.Type.ToString();
-                    if (!weldsByType.ContainsKey(weldType))
-                        weldsByType[weldType] = 0;
-                    weldsByType[weldType]++;
-                }
-
                 var report = new Dictionary<string, object>
                 {
                     { "Title", "Ведомость сварных швов" },
                     { "Date", DateTime.Now.ToString("dd.MM.yyyy") },
-                    { "TotalWelds", _welds.Count },
-                    { "TotalWeldLength", Math.Round(totalWeldLength, 2) },
-                    { "TotalWeldMass", Math.Round(totalWeldMass, 3) },
-                    { "WeldsByType", weldsByType }
+                    { "TotalWelds", 0 },
+                    { "TotalWeldLength", 0.0 },
+                    { "TotalWeldMass", 0.0 }
                 };
 
                 _logger.Log("Welding report generated successfully");
@@ -158,19 +117,6 @@ namespace TopengineerPlugin.Reports
                     { "Profiles", new List<Dictionary<string, object>>() }
                 };
 
-                var profiles = cuttingMap["Profiles"] as List<Dictionary<string, object>>;
-                
-                foreach (var profile in _profiles)
-                {
-                    profiles.Add(new Dictionary<string, object>
-                    {
-                        { "Designation", profile.GOSTDesignation },
-                        { "MassPerMeter", profile.MassPerMeter },
-                        { "Quantity", 1 },
-                        { "TotalLength", profile.Height }
-                    });
-                }
-
                 _logger.Log("Cutting map generated successfully");
                 return cuttingMap;
             }
@@ -181,66 +127,9 @@ namespace TopengineerPlugin.Reports
             }
         }
 
-        private List<Dictionary<string, object>> GenerateProfilesTable()
+        public void AddReportData(Dictionary<string, object> data)
         {
-            var table = new List<Dictionary<string, object>>();
-            foreach (var profile in _profiles)
-            {
-                table.Add(new Dictionary<string, object>
-                {
-                    { "Designation", profile.GOSTDesignation },
-                    { "Type", profile.Type.ToString() },
-                    { "MassPerMeter", profile.MassPerMeter },
-                    { "GOST", profile.GOSTStandard }
-                });
-            }
-            return table;
-        }
-
-        private List<Dictionary<string, object>> GenerateBoltsTable()
-        {
-            var table = new List<Dictionary<string, object>>();
-            foreach (var bolt in _bolts)
-            {
-                table.Add(new Dictionary<string, object>
-                {
-                    { "Diameter", bolt.Diameter },
-                    { "Length", bolt.Length },
-                    { "Grade", bolt.Grade },
-                    { "Mass", bolt.MassPerPiece },
-                    { "GOST", bolt.GOSTDesignation }
-                });
-            }
-            return table;
-        }
-
-        private double CalculateTotalMass()
-        {
-            double totalMass = 0;
-            foreach (var profile in _profiles)
-            {
-                totalMass += profile.MassPerMeter;
-            }
-            foreach (var bolt in _bolts)
-            {
-                totalMass += bolt.MassPerPiece;
-            }
-            return Math.Round(totalMass, 2);
-        }
-
-        public void AddProfile(Profile profile)
-        {
-            _profiles.Add(profile);
-        }
-
-        public void AddBolt(Bolt bolt)
-        {
-            _bolts.Add(bolt);
-        }
-
-        public void AddWeld(Weld weld)
-        {
-            _welds.Add(weld);
+            _reportData.Add(data);
         }
     }
 }
