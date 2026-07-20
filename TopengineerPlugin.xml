@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PluginData>
+  <Name>Topengineer</Name>
+  <Description>Комплексный плагин для автоматизации проектирования металлоконструкций по ГОСТ</Description>
+  <Version>1.0.0</Version>
+  <Company>BOK-stack</Company>
+  <AssemblyName>TopengineerPlugin.dll</AssemblyName>
+  <ClassName>TopengineerPlugin.TopengineerPlugin</ClassName>
+  <HelpFile></HelpFile>
+  <Tooltip>Topengineer - автоматизация проектирования по ГОСТ стандартам</Tooltip>
+</PluginData>
